@@ -263,6 +263,14 @@ function ProductList() {
         dispatch(addItem(product)); // Dispatch action to add item to cart
       };
 
+      // Function to re-enable the "Add to cart" button
+const handleEnableAddToCart = (item) => {
+    setAddedToCart((prevState) => ({
+        ...prevState,
+        [item.name]: false, // Set the button for this product to enabled
+    }));
+};
+
     return (
         <div>
     <div className="navbar" style={styleObj}>
@@ -350,7 +358,10 @@ function ProductList() {
                     </div>
                 </div>
             ) : (
-                <CartItem onContinueShopping={handleContinueShopping} />
+                <CartItem 
+                    onContinueShopping={handleContinueShopping}
+                    onRemoveItem={handleEnableAddToCart}
+                />
             )}
         </div>
     );
