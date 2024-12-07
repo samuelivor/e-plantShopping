@@ -57,6 +57,7 @@ const CartItem = ({ onContinueShopping }) => {
         });
         return totalCost;
   };
+};
 
   return (
     <div className="cart-container">

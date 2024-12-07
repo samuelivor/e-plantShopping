@@ -285,7 +285,7 @@ function ProductList() {
                             <div className="plant-card" key={plantIndex}>
                                 <h2 className="plant-title">{plant.name}</h2>
                                 <div className="img">
-                                    <img src={plant.image} alt={plant.name} />
+                                    <img className="plantImg" src={plant.image} alt={plant.name} />
                                 </div>
                                 <div className="text">{plant.description}</div>
                                 <div>${plant.cost}</div>

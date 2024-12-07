@@ -149,8 +149,12 @@ body {
 .tag img {
     height: 70px;
     width: 70px;
-    border-radius: 70%;
-    
+    border-radius: 70%; 
+}
+
+plantImg {
+    height: 30px;
+    width: auto;
 }
 
 .luxury {
