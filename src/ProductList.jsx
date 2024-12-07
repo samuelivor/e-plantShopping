@@ -7,10 +7,11 @@ import { addItem } from './CartSlice';
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-    const [addedToCart, setAddedToCart] = useState({}); // Track which products are added to the cart
-    const dispatch = useDispatch();
+    const products = useSelector(state => state.products.items);  // assuming products are in state.products.items
+    const cartItems = useSelector(state => state.cart.items);  // Cart items from Redux store
     const totalItems = useSelector((state) => state.cart.totalItems); // Get total items from Redux store
-
+    const dispatch = useDispatch();
+    
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -255,67 +256,62 @@ function ProductList() {
         e.preventDefault();
         setShowCart(false);
       };
-      const handleAddToCart = (event, product) => {
-        setAddedToCart((prevState) => ({
-          ...prevState,
-          [product.name]: true, // Track product as added to the cart
-        }));
-        dispatch(addItem(product)); // Dispatch action to add item to cart
+      const handleAddToCart = (product) => {
+        dispatch(addItem(product));  // Dispatch action to add item to the cart
       };
 
     return (
         <div>
-            <div className="navbar" style={styleObj}>
-                <div className="tag">
-                    <div className="luxury">
-                        <img 
-                            src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" 
-                            alt="Paradise Nursery" 
-                        />
-                        <a href="/" style={{ textDecoration: 'none' }}>
-                            <div>
-                                <h3 style={{ color: 'white' }}>Paradise Nursery</h3>
-                                <i style={{ color: 'white' }}>Where Green Meets Serenity</i>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div style={styleObjUl}>
+    <div className="navbar" style={styleObj}>
+        <div className="tag">
+            <div className="luxury">
+                <img 
+                    src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" 
+                    alt="Paradise Nursery" 
+                />
+                <a href="/" style={{ textDecoration: 'none' }}>
                     <div>
-                        <a href="#" onClick={(e) => handlePlantsClick(e)} style={styleA}>Plants</a>
+                        <h3 style={{ color: 'white' }}>Paradise Nursery</h3>
+                        <i style={{ color: 'white' }}>Where Green Meets Serenity</i>
                     </div>
-                    <div>
-                        <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}>
-                            <h1 className="cart">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="IconChangeColor" height="68" width="68">
-                                    <rect width="156" height="156" fill="none"></rect>
-                                    <circle cx="80" cy="216" r="12"></circle>
-                                    <circle cx="184" cy="216" r="12"></circle>
-                                    <path 
-                                        d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8"
-                                        fill="none" stroke="#faf9f9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                                    ></path>
-                                </svg>
-                            </h1>
-                            {/* Display the total number of items in cart next to the cart icon */}
-                            {totalItems > 0 && (
-                                <span className="cart-count" style={{
-                                    position: 'absolute',
-                                    top: '10px',
-                                    right: '10px',
-                                    backgroundColor: 'red',
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                    padding: '5px 10px',
-                                    fontSize: '16px'
-                                }}>
-                                    {totalItems}
-                                </span>
-                            )}
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
+        </div>
+        <div style={styleObjUl}>
+            <div>
+                <a href="#" onClick={(e) => handlePlantsClick(e)} style={styleA}>Plants</a>
+            </div>
+            <div>
+                <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}>
+                    <h1 className="cart">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="IconChangeColor" height="68" width="68">
+                            <rect width="156" height="156" fill="none"></rect>
+                            <circle cx="80" cy="216" r="12"></circle>
+                            <circle cx="184" cy="216" r="12"></circle>
+                            <path 
+                                d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8"
+                                fill="none" stroke="#faf9f9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                            ></path>
+                        </svg>
+                    </h1>
+                    {totalItems > 0 && (
+                        <span className="cart-count" style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            backgroundColor: 'red',
+                            color: 'white',
+                            borderRadius: '50%',
+                            padding: '5px 10px',
+                            fontSize: '16px'
+                        }}>
+                            {totalItems}
+                        </span>
+                    )}
+                </a>
+            </div>
+        </div>
+    </div>
 
             {!showCart ? (
                 <div className="container">
@@ -336,12 +332,11 @@ function ProductList() {
                                             </div>
                                             <div className="text">{plant.description}</div>
                                             <div>${plant.cost}</div>
-                                            <button 
-                                                className="product-button" 
-                                                onClick={(event) => handleAddToCart(event, plant)}
-                                                disabled={addedToCart[plant.name]} // Disable the button based on state 
-                                            >
-                                                Add to cart
+                                            <button
+                                                onClick={() => handleAddToCart(plant)}  // Add item to the cart
+                                                disabled={isInCart(plant.name)}  // Disable button if product is already in cart
+                                                >
+                                                {isInCart(plant.name) ? 'Added to Cart' : 'Add to Cart'}
                                             </button>
                                         </div>
                                     ))}

@@ -9,55 +9,44 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
-    let totalCost = 0;
-    cart.forEach((item) => {
-        totalCost += item.cost * item.quantity;
-    });
-    return totalCost;
+    return cart.reduce((total, item) => total + item.cost * item.quantity, 0);
   };
+
+    // Calculate total cost based on quantity for an item
+    const calculateTotalCost = (item) => {
+        return item.cost * item.quantity;
+      };
 
   const handleContinueShopping = (e) => {
     e.preventDefault();
-    setShowCart(false);
+    onContinueShopping(false);
   };
 
   const handleCheckoutShopping = (e) => {
     alert('Functionality to be added for future reference');
   };
 
-  const handleIncrement = (item) => {
-    if (item) {
-        item.quantity++;
-        dispatch(updateQuantity(item));
-    }
-  };
+const handleIncrement = (item) => {
+  if (item) {
+    // Create a new item object with updated quantity
+    const updatedItem = { ...item, quantity: item.quantity + 1 };
+    dispatch(updateQuantity(updatedItem)); // Dispatch updated item
+  }
+};
 
-  const handleDecrement = (item) => {
-    if (item && item.quantity > 0) {
-        item.quantity--;
-        dispatch(updateQuantity(item));
-    } else {
-        dispatch(removeItem(item));
-    }
-  };
+const handleDecrement = (item) => {
+  if (item && item.quantity > 1) {
+    // Create a new item object with updated quantity
+    const updatedItem = { ...item, quantity: item.quantity - 1 };
+    dispatch(updateQuantity(updatedItem)); // Dispatch updated item
+  } else {
+    dispatch(removeItem(item)); // If quantity is 0 or less, remove item
+  }
+};
 
   const handleRemove = (item) => {
-    dispatch(removeItem(item));
+    dispatch(removeItem(item.name));
   };
-
-  // Calculate total cost based on quantity for an item
-  const calculateTotalCost = (item) => {
-    if (item) {
-        let totalCost = 0;
-        const plantCategory = item.category;
-        plantCategory.forEach((plant) => {
-            const plantCost = plant.cost;
-            const plantQuantity = plant.find(item => item.name === item.name.quantity);
-            totalCost += plantCost * plantQuantity;
-        });
-        return totalCost;
-  };
-};
 
   return (
     <div className="cart-container">
@@ -68,19 +57,19 @@ const CartItem = ({ onContinueShopping }) => {
             <img className="cart-item-image" src={item.image} alt={item.name} />
             <div className="cart-item-details">
               <div className="cart-item-name">{item.name}</div>
-              <div className="cart-item-cost">{item.cost}</div>
+              <div className="cart-item-cost">Unit price: ${item.cost}</div>
               <div className="cart-item-quantity">
                 <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
               </div>
-              <div className="cart-item-total">Total: ${calculateTotalAmount(item)}</div>
+              <div className="cart-item-total">Total: ${calculateTotalCost(item)}</div>
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
             </div>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'></div>
+      <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'>Total: ${calculateTotalAmount()}</div>
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
