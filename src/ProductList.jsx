@@ -7,11 +7,10 @@ import { addItem } from './CartSlice';
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-    const products = useSelector(state => state.products.items);  // assuming products are in state.products.items
-    const cartItems = useSelector(state => state.cart.items);  // Cart items from Redux store
-    const totalItems = useSelector((state) => state.cart.totalItems); // Get total items from Redux store
+    const [addedToCart, setAddedToCart] = useState({}); // Track which products are added to the cart
     const dispatch = useDispatch();
-    
+    const totalItems = useSelector((state) => state.cart.totalItems); // Get total items from Redux store
+
     const plantsArray = [
         {
             category: "Air Purifying Plants",
@@ -256,8 +255,12 @@ function ProductList() {
         e.preventDefault();
         setShowCart(false);
       };
-      const handleAddToCart = (product) => {
-        dispatch(addItem(product));  // Dispatch action to add item to the cart
+      const handleAddToCart = (event, product) => {
+        setAddedToCart((prevState) => ({
+          ...prevState,
+          [product.name]: true, // Track product as added to the cart
+        }));
+        dispatch(addItem(product)); // Dispatch action to add item to cart
       };
 
     return (
@@ -332,11 +335,12 @@ function ProductList() {
                                             </div>
                                             <div className="text">{plant.description}</div>
                                             <div>${plant.cost}</div>
-                                            <button
-                                                onClick={() => handleAddToCart(plant)}  // Add item to the cart
-                                                disabled={isInCart(plant.name)}  // Disable button if product is already in cart
-                                                >
-                                                {isInCart(plant.name) ? 'Added to Cart' : 'Add to Cart'}
+                                            <button 
+                                                className="product-button" 
+                                                onClick={(event) => handleAddToCart(event, plant)}
+                                                disabled={addedToCart[plant.name]} // Disable the button based on state 
+                                            >
+                                                Add to cart
                                             </button>
                                         </div>
                                     ))}
