@@ -51,7 +51,7 @@ const CartItem = ({ onContinueShopping }) => {
         let totalCost = 0;
         const plantCategory = item.category;
         plantCategory.forEach((plant) => {
-            const plantCost = parseFloat(plant.cost.replace('$', '')); // Remove '$' and convert to number
+            const plantCost = plant.cost;
             const plantQuantity = plant.find(item => item.name === item.name.quantity);
             totalCost += plantCost * plantQuantity;
         });
